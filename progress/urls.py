@@ -19,5 +19,3 @@ urlpatterns = [
         StudentEnrollView.as_view()
     ),
 ]
-
-

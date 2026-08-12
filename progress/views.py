@@ -92,5 +92,3 @@ class StudentEnrollView(APIView):
         if not created:
             return Response({"detail": "You are already enrolled in this course"}, status=400)
         return Response({"message": f"Enrolled in {course.title} successfully!"}, status=201)
-
-
