@@ -61,7 +61,6 @@ INSTALLED_APPS = [
 # --------------------------------------------------
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    "lms.middleware.AutoMigrateMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -95,14 +94,13 @@ TEMPLATES = [
 WSGI_APPLICATION = "lms.wsgi.application"
 
 
-# --------------------------------------------------
-# DATABASE
-# --------------------------------------------------
+import dj_database_url
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
 }
 
 

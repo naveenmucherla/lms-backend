@@ -1,6 +1,19 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
+from django.core.management import call_command
+from django.db import connection
+
+# Auto-migrate & seed database on URL loading (when apps are 100% ready)
+try:
+    tables = connection.introspection.table_names()
+    if 'accounts_user' not in tables:
+        print("=== URLs Auto-Migrate: Creating database tables & seeding ===")
+        call_command("migrate", interactive=False)
+        from seed_data import seed_database
+        seed_database()
+except Exception as e:
+    print(f"URL Auto-Migrate Notice: {e}")
 
 urlpatterns = [
     path("api/", lambda request: JsonResponse({
