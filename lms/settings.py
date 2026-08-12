@@ -99,17 +99,8 @@ WSGI_APPLICATION = "lms.wsgi.application"
 # --------------------------------------------------
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("DB_ENGINE", "mssql"),
-        "NAME": os.environ.get("DB_NAME", "lms_db"),
-        "HOST": os.environ.get("DB_HOST", r".\SQLEXPRESS"),
-        "USER": os.environ.get("DB_USER", ""),
-        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
-        "PORT": os.environ.get("DB_PORT", ""),
-        "OPTIONS": {
-            "driver": os.environ.get("DB_DRIVER", "ODBC Driver 17 for SQL Server"),
-            "trusted_connection": os.environ.get("DB_TRUSTED_CONNECTION", "yes"),
-            "extra_params": "TrustServerCertificate=yes",
-        },
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -167,10 +158,34 @@ SIMPLE_JWT = {
 
 
 # --------------------------------------------------
-# CORS
+# CORS CONFIGURATION
 # --------------------------------------------------
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+    r"^http://localhost:\d+$",
+    r"^http://127\.0\.0\.1:\d+$",
+]
 
 
 # --------------------------------------------------
