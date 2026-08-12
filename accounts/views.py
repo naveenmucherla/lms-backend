@@ -1,15 +1,16 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
-from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView
+from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
-from .permissions import IsMentor, IsAdmin
 from .serializers import RegisterSerializer, UserSerializer
+from .permissions import IsMentor, IsAdmin
+from django.contrib.auth import get_user_model
+from rest_framework.permissions import AllowAny
 
 class StudentRegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -33,7 +34,6 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
 class LoginView(TokenObtainPairView):
     serializer_class = CustomTokenSerializer
     permission_classes = [AllowAny]
-
 
 
 
@@ -72,7 +72,9 @@ class AdminDeleteUserView(APIView):
             {"message": "User deleted successfully"},
             status=200
         )
+    
 
+User = get_user_model()
 
 class AdminCreateMentorView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
@@ -125,9 +127,15 @@ class AdminUserListView(APIView):
         return Response(serializer.data)
 
 
-class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+class InitDBView(APIView):
+    permission_classes = [AllowAny]
 
     def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response(serializer.data)
+        try:
+            from django.core.management import call_command
+            from seed_data import seed_database
+            call_command("migrate", interactive=False)
+            seed_database()
+            return Response({"status": "Database migrated and seeded successfully!"})
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)

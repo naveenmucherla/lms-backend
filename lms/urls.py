@@ -12,10 +12,13 @@ try:
 except Exception as e:
     print(f"Auto-Migrate Notice: {e}")
 
+from accounts.views import InitDBView
+
 urlpatterns = [
     path("api/", lambda request: JsonResponse({
         "status": "LMS Backend API is running"
     })),
+    path("api/init-db/", InitDBView.as_view()),
 
     path("admin/", admin.site.urls),
     path("api/auth/", include("accounts.urls")),
