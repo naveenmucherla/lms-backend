@@ -9,7 +9,7 @@ from courses.models import Course, Chapter, Lesson
 from progress.models import CourseAssignment
 
 def seed_database():
-    print("--- Seeding LMS Database (SQL Server: lms_db) ---")
+    print("--- Seeding LMS Database ---")
 
     # 1. Create Quick Accounts
     admin_user, _ = User.objects.get_or_create(username="admin", defaults={"role": "ADMIN", "is_staff": True, "is_superuser": True})
@@ -17,16 +17,19 @@ def seed_database():
     admin_user.role = "ADMIN"
     admin_user.is_staff = True
     admin_user.is_superuser = True
+    admin_user.is_active = True
     admin_user.save()
 
     mentor_user, _ = User.objects.get_or_create(username="mentor1", defaults={"role": "MENTOR"})
     mentor_user.set_password("pass123")
     mentor_user.role = "MENTOR"
+    mentor_user.is_active = True
     mentor_user.save()
 
     student_user, _ = User.objects.get_or_create(username="student1", defaults={"role": "STUDENT"})
     student_user.set_password("pass123")
     student_user.role = "STUDENT"
+    student_user.is_active = True
     student_user.save()
 
     print("Quick Accounts (admin, mentor1, student1) populated successfully.")
@@ -41,7 +44,7 @@ def seed_database():
                 {
                     "title": "1. Django Backend Core",
                     "lessons": [
-                        {"title": "Introduction to Django Models & ORM", "content": "Learn how Django maps Python objects to SQL Server database tables.", "video_url": "https://www.youtube.com/watch?v=F5mRW0jo-U4"},
+                        {"title": "Introduction to Django Models & ORM", "content": "Learn how Django maps Python objects to database tables.", "video_url": "https://www.youtube.com/watch?v=F5mRW0jo-U4"},
                         {"title": "Building REST APIs with DRF", "content": "Understand API views, serializers, and JWT token authentication.", "video_url": "https://www.youtube.com/watch?v=c708Nf0cHMS"}
                     ]
                 },
@@ -252,7 +255,6 @@ def seed_database():
             course.mentor = mentor_user
             course.save()
 
-        # Seed initial assignment for student1 for course 101
         if cdata["id"] in [101, 102]:
             CourseAssignment.objects.get_or_create(student=student_user, course=course)
 
@@ -272,7 +274,7 @@ def seed_database():
                     }
                 )
 
-    print(f"Successfully populated {len(top_courses)} Top Courses with syllabus into MS SQL Server!")
+    print(f"Successfully populated {len(top_courses)} Top Courses with syllabus into database!")
 
 if __name__ == "__main__":
     seed_database()
