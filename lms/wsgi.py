@@ -1,16 +1,18 @@
-"""
-WSGI config for lms project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/
-"""
-
 import os
-
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lms.settings')
 
 application = get_wsgi_application()
+
+# Automated database migration & seeding on container boot (Render/Production)
+try:
+    from django.core.management import call_command
+    print("=== Auto-running database migrations on WSGI startup ===")
+    call_command("migrate", interactive=False)
+    
+    from seed_data import seed_database
+    print("=== Auto-seeding database records on WSGI startup ===")
+    seed_database()
+except Exception as e:
+    print(f"WSGI Auto-bootstrap notice: {e}")
