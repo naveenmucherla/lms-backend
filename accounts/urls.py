@@ -7,13 +7,13 @@ from .views import (
     AdminCreateMentorView,
     MentorListView,
     AdminUsersView,
-    UserProfileView,
+    InitDBView,
 )
 
 urlpatterns = [
+    path("init-db/", InitDBView.as_view(), name="init-db"),
     path("register/", StudentRegisterView.as_view(), name="register"),
     path("login/", LoginView.as_view(), name="login"),
-    path("me/", UserProfileView.as_view(), name="user-profile"),
 
     # Student / Mentor
     path("students/", StudentListView.as_view(), name="students"),
@@ -24,4 +24,3 @@ urlpatterns = [
     path("admin/users/<int:user_id>/delete/", AdminDeleteUserView.as_view()),
     path("admin/create-mentor/", AdminCreateMentorView.as_view()),
 ]
-
