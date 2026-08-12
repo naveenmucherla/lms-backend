@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: lms-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn lms.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: lms.settings
