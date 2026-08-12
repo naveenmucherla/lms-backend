@@ -1,18 +1,23 @@
 import os
-from django.core.wsgi import get_wsgi_application
+import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lms.settings')
+django.setup()
 
-application = get_wsgi_application()
+from django.core.management import call_command
+from django.core.wsgi import get_wsgi_application
 
-# Automated database migration & seeding on container boot (Render/Production)
+print("=== Running DB Migrations on WSGI Startup ===")
 try:
-    from django.core.management import call_command
-    print("=== Auto-running database migrations on WSGI startup ===")
     call_command("migrate", interactive=False)
-    
+except Exception as e:
+    print(f"Migration warning: {e}")
+
+print("=== Running Seed Data on WSGI Startup ===")
+try:
     from seed_data import seed_database
-    print("=== Auto-seeding database records on WSGI startup ===")
     seed_database()
 except Exception as e:
-    print(f"WSGI Auto-bootstrap notice: {e}")
+    print(f"Seeding warning: {e}")
+
+application = get_wsgi_application()
